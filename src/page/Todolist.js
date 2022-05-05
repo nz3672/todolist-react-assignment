@@ -55,31 +55,13 @@ const Todolist = () => {
               />
             </button>
           </div>
-          <DragDropContext>
-            <Droppable droppableId="droppable-1">
-              {(provided) => (
-                <ul {...provided.droppableProps} ref={provided.innerRef}>
-                  {tasks.map((item, index) => (
-                    <Draggable
-                      key={item.id}
-                      draggableId={item.id.toString()}
-                      index={index}>
-                      {(provided) => (
-                        <li
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          ref={provided.innerRef}
-                          key={index}
-                          onDragStart={(e) => {}}>
-                          <Task task={item} tasks={tasks} setTasks={setTasks} />
-                        </li>
-                      )}
-                    </Draggable>
-                  ))}
-                </ul>
-              )}
-            </Droppable>
-          </DragDropContext>
+          <ul>
+            {tasks.map((item, index) => (
+              <li key={index}>
+                <Task task={item} tasks={tasks} setTasks={setTasks} />
+              </li>
+            ))}
+          </ul>
         </div>
         <div className="flex w-full h-51 bg-zinc-100 rounded-b-xl px-2.5 justify-between items-center">
           <input
