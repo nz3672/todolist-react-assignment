@@ -23,7 +23,7 @@ const TasklistHeader = (props) => {
         <h1 className="text-2xl font-[Roboto] font-medium text-[#6FC5A6]">
           TODAY
         </h1>
-        <p className="text-sm font-medium leading-3">
+        <p className="text-xs font-medium font-[Roboto] leading-3">
           <i>{tasks.length} Tasks</i>
         </p>
       </div>
