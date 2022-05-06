@@ -26,7 +26,7 @@ const TaskList = (props) => {
 
     // re-map id
     originTasks.map((item, index) => {
-      newTasks.splice(index, 1, { ...newTasks[index], id: item.id });
+      return newTasks.splice(index, 1, { ...newTasks[index], id: item.id });
     });
 
     sortTasksByDnD(newTasks).catch((err) => {
@@ -48,13 +48,18 @@ const TaskList = (props) => {
                 key={item.id}
                 draggableId={item.id.toString()}
                 index={index}>
-                {(provided) => (
+                {(provided, snapshot) => (
                   <li
                     key={item.id}
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}>
-                    <Task task={item} tasks={tasks} setTasks={setTasks} />
+                    <Task
+                      task={item}
+                      tasks={tasks}
+                      setTasks={setTasks}
+                      isDragging={snapshot.isDragging}
+                    />
                   </li>
                 )}
               </Draggable>
