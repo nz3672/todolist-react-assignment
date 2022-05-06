@@ -1,78 +1,56 @@
 import React, { useEffect, useState } from "react";
-import Task from "../components/Task";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getAllTask, addTask, deleteAllTasks } from "../api/apiManage";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { getAllTask, deleteAllTasks } from "../api/apiManage";
+import TaskList from "../components/TaskList";
+import TaskInput from "../components/TaskInput";
+import { logError } from "../util/UtilFunction";
+import { toast } from "react-toastify";
 
 const Todolist = () => {
   const [tasks, setTasks] = useState([]);
-  const [taskInput, setTaskInput] = useState("");
+
   useEffect(() => {
-    getAllTask().then((response) => {
-      setTasks(response);
-    });
+    getAllTask()
+      .then((response) => {
+        setTasks(response);
+      })
+      .catch((err) => logError(err));
 
     return () => {};
   }, []);
-  const onChange = (e) => {
-    setTaskInput(e.target.value);
-  };
-
-  const onSubmit = (e) => {
-    addTask(taskInput)
-      .then((response) => {
-        setTasks([...tasks, response]);
-        setTaskInput("");
-      })
-      .catch((err) => console.log(err));
-  };
 
   const handleDeleteAllBtn = () => {
     deleteAllTasks()
-      .then((response) => setTasks([]))
-      .catch((err) => console.log(err));
+      .then(() => {
+        setTasks([]);
+        toast.success("Successfully removed all tasks!", { theme: "colored" });
+      })
+      .catch((err) => logError(err));
   };
 
   return (
-    <div className="flex justify-center items-center w-screen h-screen bg-slate-300">
+    <div className="flex justify-center items-center w-screen h-screen bg-[#E5E5E5]">
       <div className="flex flex-col justify-between h-403 w-267 bg-white rounded-xl">
-        <div className="p-5">
-          <div className="flex justify-between mb-7">
-            <div>
-              <h1 className="text-2xl font-[Roboto] font-medium text-emerald-500">
-                TODAY
-              </h1>
-              <p className="text-sm font-medium leading-3">
-                <i>{tasks.length} Tasks</i>
-              </p>
-            </div>
-            <button
-              className="self-start leading-8"
-              onClick={() => handleDeleteAllBtn()}>
-              <FontAwesomeIcon
-                className="h-5 w-5 text-rose-500"
-                icon="fa-solid fa-eraser"
-              />
-            </button>
+        <div className="flex justify-between p-5">
+          <div>
+            <h1 className="text-2xl font-[Roboto] font-medium text-[#6FC5A6]">
+              TODAY
+            </h1>
+            <p className="text-sm font-medium leading-3">
+              <i>{tasks.length} Tasks</i>
+            </p>
           </div>
-          <ul>
-            {tasks.map((item, index) => (
-              <li key={index}>
-                <Task task={item} tasks={tasks} setTasks={setTasks} />
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="flex w-full h-51 bg-zinc-100 rounded-b-xl px-2.5 justify-between items-center">
-          <input
-            className="bg-transparent focus:outline-none"
-            placeholder="What we have to do?"
-            onChange={onChange}
-            value={taskInput}></input>
-          <button onClick={() => onSubmit()} className="text-emerald-500">
-            Add
+          <button
+            className="self-start leading-8"
+            onClick={() => handleDeleteAllBtn()}>
+            <FontAwesomeIcon
+              className="h-5 w-5 text-[#FF7575]"
+              icon="fa-solid fa-eraser"
+            />
           </button>
         </div>
+        <TaskList tasks={tasks} setTasks={setTasks} />
+        <TaskInput tasks={tasks} setTasks={setTasks} />
       </div>
     </div>
   );

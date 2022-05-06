@@ -1,12 +1,15 @@
 import axios from "axios";
 
-function getCookie(name) {
+async function getCookie(name) {
   let cookieValue = null;
+  if (!document.cookie.includes("csrftoken")) {
+    await axios.get("cookie/");
+  }
   if (document.cookie && document.cookie !== "") {
     const cookies = document.cookie.split(";");
     for (let i = 0; i < cookies.length; i++) {
       const cookie = cookies[i].trim();
-      // Does this cookie string begin with the name we want?
+
       if (cookie.substring(0, name.length + 1) === name + "=") {
         cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
         break;
@@ -29,9 +32,7 @@ export const addTask = async (task) => {
     task_status: false,
   };
 
-  await axios.get("cookie/");
-
-  const csrftoken = getCookie("csrftoken");
+  const csrftoken = await getCookie("csrftoken");
 
   const config = {
     headers: { "X-CSRFToken": csrftoken },
@@ -43,9 +44,7 @@ export const addTask = async (task) => {
 };
 
 export const deleteTask = async (id) => {
-  await axios.get("cookie/");
-
-  const csrftoken = getCookie("csrftoken");
+  const csrftoken = await getCookie("csrftoken");
 
   const config = {
     headers: { "X-CSRFToken": csrftoken },
@@ -57,9 +56,7 @@ export const deleteTask = async (id) => {
 };
 
 export const updateTask = async (task) => {
-  await axios.get("/cookie");
-
-  const csrftoken = getCookie("csrftoken");
+  const csrftoken = await getCookie("csrftoken");
 
   const config = {
     headers: { "X-CSRFToken": csrftoken },
@@ -71,15 +68,25 @@ export const updateTask = async (task) => {
 };
 
 export const deleteAllTasks = async () => {
-  await axios.get("/cookie");
-
-  const csrftoken = getCookie("csrftoken");
+  const csrftoken = await getCookie("csrftoken");
 
   const config = {
     headers: { "X-CSRFToken": csrftoken },
   };
 
   const response = await axios.delete(`/api/task/delete_all/`, config);
+
+  return response.data;
+};
+
+export const sortTasksByDnD = async (tasks) => {
+  const csrftoken = await getCookie("csrftoken");
+
+  const config = {
+    headers: { "X-CSRFToken": csrftoken },
+  };
+
+  const response = await axios.put("/api/task/", tasks, config);
 
   return response.data;
 };
